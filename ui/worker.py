@@ -10,7 +10,10 @@ SOURCE_KEYS = {
     "Indeed": "indeed",
     "Remotive": "remotive",
     "We Work Remotely": "wwr",
+    "ZipRecruiter": "ziprecruiter",
+    "Search internet (Bing)": "bing",
 }
+
 
 
 class ScanWorker(QThread):

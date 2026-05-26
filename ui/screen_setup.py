@@ -83,12 +83,15 @@ class SetupScreen(QWidget):
             "Indeed": SourceCheckbox("Indeed", True),
             "Remotive": SourceCheckbox("Remotive", False),
             "We Work Remotely": SourceCheckbox("We Work Remotely", False),
+            "ZipRecruiter": SourceCheckbox("ZipRecruiter", False),
+            "Search internet (Bing)": SourceCheckbox("Search internet (Bing)", False),
         }
         keys = list(self.sources.keys())
         for i, key in enumerate(keys):
             grid.addWidget(self.sources[key], i // 2, i % 2)
         body.addLayout(grid)
         body.addSpacing(20)
+
 
         slider_label = QLabel("Minimum match score")
         slider_label.setStyleSheet(
