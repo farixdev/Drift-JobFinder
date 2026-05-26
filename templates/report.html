@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>drift.jobs — Match Report</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "DM Sans", "Segoe UI", system-ui, sans-serif;
+      background: #FAFAF9;
+      color: #111110;
+      line-height: 1.6;
+      padding: 48px 24px;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 20px; font-weight: 500; margin-bottom: 4px; }
+    .meta { font-size: 13px; color: #6F6E69; margin-bottom: 32px; }
+    .card {
+      background: #fff;
+      border: 0.5px solid rgba(0,0,0,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .title { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+    .sub { font-size: 12px; color: #6F6E69; margin-bottom: 8px; }
+    .score { font-size: 18px; font-weight: 500; float: right; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #ECFDF5;
+      color: #065F46;
+    }
+    .summary { font-size: 12px; color: #6F6E69; margin-top: 8px; }
+    a.apply {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 12px;
+      color: #111110;
+      text-decoration: none;
+      border: 0.5px solid rgba(0,0,0,0.15);
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>drift.jobs match report</h1>
+    <p class="meta">{{ count }} jobs · above {{ threshold }}% · {{ generated_at }}</p>
+    {% for job in jobs %}
+    <div class="card">
+      <span class="score">{{ job.score }}%</span>
+      <div class="title">{{ job.title }}</div>
+      <div class="sub">{{ job.company }} · {{ job.location }}{% if job.job_type %} · {{ job.job_type }}{% endif %}</div>
+      <div class="tags">
+        {% for skill in job.matched_skills %}
+        <span class="tag">{{ skill }}</span>
+        {% endfor %}
+      </div>
+      {% if job.summary %}<p class="summary">{{ job.summary }}</p>{% endif %}
+      <a class="apply" href="{{ job.url }}" target="_blank" rel="noopener">Apply →</a>
+    </div>
+    {% endfor %}
+  </div>
+</body>
+</html>
