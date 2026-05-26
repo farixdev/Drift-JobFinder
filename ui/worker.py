@@ -1,3 +1,5 @@
+import time
+
 from PyQt5.QtCore import QThread, pyqtSignal
 
 from core import ai_engine, matcher, parser
@@ -12,7 +14,9 @@ SOURCE_KEYS = {
     "We Work Remotely": "wwr",
     "ZipRecruiter": "ziprecruiter",
     "Search internet (Bing)": "bing",
+    "Search internet (Google)": "google",
 }
+
 
 
 
@@ -22,6 +26,8 @@ class ScanWorker(QThread):
     subtitle_signal = pyqtSignal(str)
     done_signal = pyqtSignal(list)
     error_signal = pyqtSignal(str)
+    pause_prompt_signal = pyqtSignal(int, int)  # jobs_found, elapsed_seconds
+
 
     def __init__(
         self,
@@ -71,7 +77,37 @@ class ScanWorker(QThread):
 
             all_jobs = []
 
+            # Pause/continue after some time so the user can decide whether to
+            # continue extracting more jobs or to start matching/scoring.
+            started_at = time.time()
+            paused_once = False
+            PAUSE_AFTER_SECONDS = 210  # ~3.5 minutes
+            JOBS_SOFT_TARGET = 35  # aim around 30–40 while paused
+
+            def maybe_pause() -> bool:
+                nonlocal paused_once
+                if paused_once:
+                    return False
+                elapsed = time.time() - started_at
+                jobs_found = len(all_jobs)
+                if elapsed >= PAUSE_AFTER_SECONDS and jobs_found >= JOBS_SOFT_TARGET:
+                    paused_once = True
+                    self.log_signal.emit(
+                        f"Pause: extracted {jobs_found} jobs so far (elapsed {int(elapsed)}s).",
+                        "active",
+                    )
+                    self.pause_prompt_signal.emit(jobs_found, int(elapsed))
+                    # Wait until UI sets the worker decision.
+                    self._waiting_for_user = False
+                    return self._user_decision_end
+                return False
+
+            self._user_decision_end = False
+            self._resume_scan = True
+            self._waiting_for_user = False
+
             if self.custom_url:
+
                 label = self.custom_url.replace("https://", "")
                 self.log_signal.emit(f"Fetching {label}...", "active")
                 scraper = get_custom_scraper(self.custom_url)
@@ -79,6 +115,10 @@ class ScanWorker(QThread):
                 found_count = len(jobs)
                 jobs = dedupe_by_url(jobs)
                 all_jobs.extend(jobs)
+                if maybe_pause():
+                    return
+
+
                 self.log_signal.emit(
                     f"{label} — {len(jobs)} roles found",
                     "done",

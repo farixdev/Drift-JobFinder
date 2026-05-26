@@ -85,6 +85,7 @@ class SetupScreen(QWidget):
             "We Work Remotely": SourceCheckbox("We Work Remotely", False),
             "ZipRecruiter": SourceCheckbox("ZipRecruiter", False),
             "Search internet (Bing)": SourceCheckbox("Search internet (Bing)", False),
+            "Search internet (Google)": SourceCheckbox("Search internet (Google)", False),
         }
         keys = list(self.sources.keys())
         for i, key in enumerate(keys):

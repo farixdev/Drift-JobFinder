@@ -1,4 +1,11 @@
-from PyQt5.QtWidgets import QMainWindow, QStackedWidget, QVBoxLayout, QWidget, QMessageBox
+from PyQt5.QtWidgets import (
+    QMainWindow,
+    QStackedWidget,
+    QVBoxLayout,
+    QWidget,
+    QMessageBox,
+    QPushButton,
+)
 
 from ui import styles
 from ui.screen_results import ResultsScreen
@@ -58,13 +65,50 @@ class DriftApp(QMainWindow):
         self._worker.done_signal.connect(
             lambda jobs: self._show_results(jobs, threshold)
         )
+        self._worker.pause_prompt_signal.connect(self._pause_prompt)
         self._worker.error_signal.connect(self._show_error)
         self._worker.start()
+
 
     def _show_results(self, jobs: list, threshold: int) -> None:
         self.results_screen.set_results(jobs, threshold)
         self.stack.setCurrentWidget(self.results_screen)
 
+    def _pause_prompt(self, jobs_found: int, elapsed_seconds: int) -> None:
+        if not self._worker:
+            return
+        self.scan_screen.update_log(
+            f"Paused — {jobs_found} jobs extracted. Decision required...", "active"
+        )
+
+        end_btn = QPushButton("End (start matching now)")
+        continue_btn = QPushButton("Continue scanning")
+
+        msg = QMessageBox(
+            QMessageBox.Question,
+            "Continue scanning?",
+            f"Drift paused after {elapsed_seconds}s and ~{jobs_found} jobs.\n\n"
+            "Continue to scrape more jobs, or end now and start matching your CV.",
+            QMessageBox.NoButton,
+            self,
+        )
+        msg.addButton(continue_btn, QMessageBox.AcceptRole)
+        msg.addButton(end_btn, QMessageBox.RejectRole)
+
+        # Block until the user clicks.
+        clicked = msg.exec_()
+
+        # exec_ returns an int role; easier to check clicked button.
+        if msg.clickedButton() == end_btn:
+            self._worker._resume_scan = False
+            self._worker._user_decision_end = True
+        else:
+            self._worker._resume_scan = True
+            self._worker._user_decision_end = False
+
+        self._worker._waiting_for_user = False
+
     def _show_error(self, message: str) -> None:
         QMessageBox.critical(self, "Scan failed", message)
         self.stack.setCurrentWidget(self.setup_screen)
+

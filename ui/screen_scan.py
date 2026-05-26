@@ -85,6 +85,7 @@ class ScanScreen(QWidget):
             f"Filtering by {threshold}% threshold",
             "Generating report",
         ]
+
         for text in placeholders:
             line = LogLine(text, "pending")
             self.log_layout.addWidget(line)

@@ -34,7 +34,7 @@ class LinkedInScraper(BaseScraper):
             if not cards:
                 cards = driver.find_elements(By.CSS_SELECTOR, "div.base-card")
 
-            for card in cards[:30]:
+            for card in cards[:45]:
                 try:
                     title_el = card.find_element(
                         By.CSS_SELECTOR,

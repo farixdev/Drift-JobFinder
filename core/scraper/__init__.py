@@ -2,6 +2,8 @@ from core.scraper.base import BaseScraper
 from core.scraper.custom import CustomSiteScraper
 from core.scraper.indeed import IndeedScraper
 from core.scraper.internet_bing import BingInternetSearchScraper
+from core.scraper.internet_google import GoogleInternetSearchScraper
+
 from core.scraper.linkedin import LinkedInScraper
 from core.scraper.remotive import RemotiveScraper
 from core.scraper.wwr import WWRScraper
@@ -14,7 +16,9 @@ SCRAPERS = {
     "wwr": WWRScraper,
     "ziprecruiter": ZipRecruiterScraper,
     "bing": BingInternetSearchScraper,
+    "google": GoogleInternetSearchScraper,
 }
+
 
 
 

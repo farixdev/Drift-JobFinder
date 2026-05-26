@@ -31,7 +31,7 @@ class IndeedScraper(BaseScraper):
             driver.get(url)
             time.sleep(3)
             cards = driver.find_elements(By.CSS_SELECTOR, "div.job_seen_beacon, div.cardOutline")
-            for card in cards[:30]:
+            for card in cards[:45]:
                 try:
                     title_el = card.find_element(By.CSS_SELECTOR, "h2.jobTitle span, a.jcs-JobTitle")
                     company_el = card.find_element(
