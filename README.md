@@ -217,5 +217,5 @@ MIT — do whatever you want with it.
 ---
 
 <div align="center">
-  <sub>Built by <a href="https://github.com/yourusername">your name</a> · give it a ⭐ if it helped</sub>
+  <sub>Built by <a href="https://github.com/farixdev">faris</a> · give it a ⭐ if it helped</sub>
 </div>
